@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">Komponen diperlukan</string>
+    <string name="need_component_desc">Komponen runtime harus dipasang sebelum Anda dapat melanjutkan. Ketuk tombol di bawah untuk memasangnya.</string>
+    <string name="btn_install">Pasang dan lanjutkan</string>
+    <string name="btn_retry">Coba lagi</string>
+    <string name="status_checking">Memeriksa komponen runtime…</string>
+    <string name="status_installing">Pemasangan sedang berlangsung. Harap jangan tutup aplikasi ini.</string>
+    <string name="status_launching">Meluncurkan…</string>
+    <string name="status_need_permission">Diperlukan izin untuk memasang aplikasi tidak dikenal.</string>
+    <string name="status_install_failed">Pemasangan tidak selesai. Silakan coba lagi.</string>
+    <string name="status_install_canceled">Pemasangan dibatalkan.</string>
+    <string name="status_launch_failed">Gagal meluncurkan komponen.</string>
+    <string name="status_missing_asset">Pemasang tertanam tidak ditemukan. Harap letakkan B.apk di folder assets.</string>
+</resources>

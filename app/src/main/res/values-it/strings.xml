@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">Componente richiesto</string>
+    <string name="need_component_desc">Prima di continuare è necessario installare un componente di runtime. Tocca il pulsante qui sotto per installarlo.</string>
+    <string name="btn_install">Installa e continua</string>
+    <string name="btn_retry">Riprova</string>
+    <string name="status_checking">Verifica del componente di runtime…</string>
+    <string name="status_installing">Installazione in corso. Non chiudere questa app.</string>
+    <string name="status_launching">Avvio in corso…</string>
+    <string name="status_need_permission">È necessaria l’autorizzazione per installare app sconosciute.</string>
+    <string name="status_install_failed">Installazione non completata. Riprova.</string>
+    <string name="status_install_canceled">Installazione annullata.</string>
+    <string name="status_launch_failed">Impossibile avviare il componente.</string>
+    <string name="status_missing_asset">Programma di installazione incorporato non trovato. Posiziona B.apk nella cartella assets.</string>
+</resources>

@@ -4,10 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageInstaller
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,35 +15,18 @@ import com.example.hostlauncher.databinding.ActivityLauncherBinding
  * Entry point. On every launch it first checks whether B is installed:
  *   installed    -> launch B immediately (feels like B runs inside A)
  *   not installed -> prompt -> ensure install permission -> install B -> launch B
+ *
+ * During installation it shows an indeterminate water-ripple animation (no real
+ * percentage) with a "please don't close the app" message, localized to the device
+ * language.
  */
 class LauncherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLauncherBinding
 
-    // Tracks the in-flight install session so progress callbacks can be matched to it.
-    private var currentSessionId = -1
-    private val mainHandler = Handler(Looper.getMainLooper())
-
-    private val installer by lazy { packageManager.packageInstaller }
-
-    // Overall session progress is 0f..1f: ~0..0.8 is the staging/copy phase (which we
-    // already show ourselves), ~0.8..1.0 is the real system install. We only surface the
-    // system-install slice here, remapped to 0..100.
-    private val sessionCallback = object : PackageInstaller.SessionCallback() {
-        override fun onCreated(sessionId: Int) {}
-        override fun onBadgingChanged(sessionId: Int) {}
-        override fun onActiveChanged(sessionId: Int, active: Boolean) {}
-        override fun onFinished(sessionId: Int, success: Boolean) {}
-        override fun onProgressChanged(sessionId: Int, progress: Float) {
-            if (sessionId != currentSessionId) return
-            if (progress >= STAGING_FRACTION) {
-                val installPct =
-                    (((progress - STAGING_FRACTION) / (1f - STAGING_FRACTION)) * 100)
-                        .toInt().coerceIn(0, 100)
-                showSystemInstalling(installPct)
-            }
-        }
-    }
+    // True while our install session is in flight, so returning to the foreground
+    // (e.g. from the system install dialog) keeps the ripple instead of the prompt.
+    private var installing = false
 
     // Returned from the "install unknown apps" settings screen; re-check and continue.
     private val unknownSourcesLauncher =
@@ -54,7 +34,7 @@ class LauncherActivity : AppCompatActivity() {
             if (InstallManager.canInstall(this)) {
                 startInstall()
             } else {
-                showPrompt(getString(R.string.status_need_permission))
+                showError(getString(R.string.status_need_permission))
             }
         }
 
@@ -63,10 +43,14 @@ class LauncherActivity : AppCompatActivity() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.getStringExtra(InstallResultReceiver.EXTRA_RESULT)) {
                 InstallResultReceiver.Result.SUCCESS.name -> launchBOrError()
-                InstallResultReceiver.Result.CANCELED.name ->
-                    showPrompt(getString(R.string.status_install_canceled))
-                else ->
-                    showPrompt(getString(R.string.status_install_failed))
+                InstallResultReceiver.Result.CANCELED.name -> {
+                    installing = false
+                    showError(getString(R.string.status_install_canceled))
+                }
+                else -> {
+                    installing = false
+                    showError(getString(R.string.status_install_failed))
+                }
             }
         }
     }
@@ -80,39 +64,34 @@ class LauncherActivity : AppCompatActivity() {
             installResultReceiver,
             IntentFilter(InstallResultReceiver.LOCAL_ACTION)
         )
-        installer.registerSessionCallback(sessionCallback, mainHandler)
 
         binding.actionButton.setOnClickListener { onInstallClicked() }
     }
 
     override fun onResume() {
         super.onResume()
-        // Re-evaluate every time we come to the front (e.g. user uninstalled B, or
-        // returned from the system install dialog).
         evaluate()
     }
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(installResultReceiver)
-        installer.unregisterSessionCallback(sessionCallback)
         super.onDestroy()
     }
 
     /** Step 6: prefer detecting B; if present, launch straight away. */
     private fun evaluate() {
-        showChecking()
         when {
             InstallManager.isBInstalled(this) -> launchBOrError()
+            installing -> showInstalling()          // keep ripple while install is running
             !InstallManager.hasEmbeddedApk(this) ->
-                showPrompt(getString(R.string.status_missing_asset), showButton = false)
-            else -> showPrompt(getString(R.string.need_component_desc))
+                showError(getString(R.string.status_missing_asset), showButton = false)
+            else -> showNeedComponent()
         }
     }
 
     /** Step 2/3: user tapped "install". Ensure permission, then install. */
     private fun onInstallClicked() {
         if (!InstallManager.canInstall(this)) {
-            // Step 3: send the user to grant "install unknown apps", then resume.
             unknownSourcesLauncher.launch(InstallManager.unknownSourcesSettingsIntent(this))
             return
         }
@@ -120,101 +99,64 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     /**
-     * Step 4: write B.apk into a session (showing real byte progress), then commit.
-     * Runs off the main thread so the copy doesn't block the UI and the percentage
-     * can animate. After commit the system install UI takes over; its progress is
-     * shown by [sessionCallback] when this screen is foreground.
+     * Step 4: write B.apk into a session and commit (off the main thread). The UI shows
+     * the water-ripple animation; the system install dialog then takes over.
      */
     private fun startInstall() {
-        currentSessionId = -1
-        showWriting(0)
+        installing = true
+        showInstalling()
         Thread {
             try {
-                val id = InstallManager.installEmbeddedApk(this) { pct ->
-                    runOnUiThread { if (currentSessionId == -1) showWriting(pct) }
-                }
-                runOnUiThread {
-                    currentSessionId = id
-                    // Hand-off to the system installer; show an indeterminate state
-                    // until onProgressChanged reports the real install fraction.
-                    showSystemInstalling(null)
-                }
+                InstallManager.installEmbeddedApk(this)
             } catch (e: Exception) {
-                runOnUiThread { showPrompt(getString(R.string.status_install_failed)) }
+                runOnUiThread {
+                    installing = false
+                    showError(getString(R.string.status_install_failed))
+                }
             }
         }.start()
     }
 
     /** Step 5: install finished -> launch B. */
     private fun launchBOrError() {
+        installing = false
         showLaunching()
         if (InstallManager.launchB(this)) {
-            // B is now in front; close the host shell so Back doesn't return here.
             finish()
         } else {
-            showPrompt(getString(R.string.status_launch_failed))
+            showError(getString(R.string.status_launch_failed))
         }
     }
 
     // ---- UI states ----------------------------------------------------------
 
-    private fun showChecking() = setState(
-        status = getString(R.string.status_checking),
-        spinner = true, prompt = false
-    )
+    private fun showChecking() = setState(status = getString(R.string.status_checking), spinner = true)
 
-    /** Writing B.apk into the session — real byte progress. */
-    private fun showWriting(percent: Int) = setState(
-        status = getString(R.string.status_writing, percent),
-        spinner = false, prompt = false, installPercent = percent
-    )
+    /** Installing: water-ripple animation + "do not close" message. */
+    private fun showInstalling() = setState(status = getString(R.string.status_installing), wave = true)
 
-    /**
-     * System install phase. [percent] null = indeterminate (system UI owns the screen);
-     * a value = the real install fraction reported while this screen is foreground.
-     */
-    private fun showSystemInstalling(percent: Int?) {
-        if (percent == null) {
-            setState(getString(R.string.status_sys_installing), spinner = true, prompt = false)
-        } else {
-            setState(
-                getString(R.string.status_sys_installing_progress, percent),
-                spinner = false, prompt = false, installPercent = percent
-            )
-        }
-    }
+    private fun showLaunching() = setState(status = getString(R.string.status_launching), spinner = true)
 
-    private fun showLaunching() = setState(
-        status = getString(R.string.status_launching),
-        spinner = true, prompt = false
-    )
+    /** Initial prompt with the install button (static title + description). */
+    private fun showNeedComponent() = setState(prompt = true, button = true)
 
-    private fun showPrompt(status: String, showButton: Boolean = true) = setState(
-        status = status, spinner = false, prompt = true, button = showButton
-    )
+    /** Prompt plus an error/status line. */
+    private fun showError(msg: String, showButton: Boolean = true) =
+        setState(status = msg, prompt = true, button = showButton)
 
     private fun setState(
-        status: String,
-        spinner: Boolean,
-        prompt: Boolean,
+        status: String = "",
+        spinner: Boolean = false,
+        wave: Boolean = false,
+        prompt: Boolean = false,
         button: Boolean = false,
-        installPercent: Int = -1,
     ) {
+        binding.wave.visibility = if (wave) View.VISIBLE else View.GONE
         binding.progress.visibility = if (spinner) View.VISIBLE else View.GONE
         binding.actionButton.visibility = if (button) View.VISIBLE else View.GONE
         binding.titleText.visibility = if (prompt) View.VISIBLE else View.GONE
         binding.descText.visibility = if (prompt) View.VISIBLE else View.GONE
-        if (installPercent >= 0) {
-            binding.installProgress.visibility = View.VISIBLE
-            binding.installProgress.progress = installPercent
-        } else {
-            binding.installProgress.visibility = View.GONE
-        }
+        binding.statusText.visibility = if (status.isEmpty()) View.GONE else View.VISIBLE
         binding.statusText.text = status
-    }
-
-    companion object {
-        /** Fraction of overall session progress the framework assigns to staging/copy. */
-        private const val STAGING_FRACTION = 0.8f
     }
 }

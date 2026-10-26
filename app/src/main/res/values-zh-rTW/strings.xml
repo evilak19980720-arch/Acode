@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">需要安裝執行元件</string>
+    <string name="need_component_desc">首次使用需要安裝執行元件後才能繼續，請點選下方按鈕開始安裝。</string>
+    <string name="btn_install">安裝並繼續</string>
+    <string name="btn_retry">重試</string>
+    <string name="status_checking">正在偵測執行元件…</string>
+    <string name="status_installing">程式安裝正在進行中，請勿關閉本程式</string>
+    <string name="status_launching">正在啟動…</string>
+    <string name="status_need_permission">需要授予「安裝不明應用程式」權限</string>
+    <string name="status_install_failed">安裝未完成，請重試</string>
+    <string name="status_install_canceled">安裝已取消</string>
+    <string name="status_launch_failed">啟動執行元件失敗</string>
+    <string name="status_missing_asset">找不到內嵌安裝包，請將 B.apk 放入 assets 目錄</string>
+</resources>

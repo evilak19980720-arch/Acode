@@ -1,20 +1,18 @@
 <resources>
+    <!-- Default / fallback locale: English -->
     <string name="app_name">HostLauncher</string>
 
-    <string name="need_component_title">需要安装运行组件</string>
-    <string name="need_component_desc">首次使用需要安装运行组件后才能继续，点击下方按钮开始安装。</string>
-    <string name="btn_install">安装并继续</string>
-    <string name="btn_retry">重试</string>
+    <string name="need_component_title">Component required</string>
+    <string name="need_component_desc">A runtime component must be installed before you can continue. Tap the button below to install it.</string>
+    <string name="btn_install">Install and continue</string>
+    <string name="btn_retry">Retry</string>
 
-    <string name="status_checking">正在检测运行组件…</string>
-    <string name="status_installing">正在安装运行组件，请在系统弹窗中点击“安装”…</string>
-    <string name="status_writing">正在写入安装包… %1$d%%</string>
-    <string name="status_sys_installing">正在安装 B…请在系统安装界面完成</string>
-    <string name="status_sys_installing_progress">系统安装中… %1$d%%</string>
-    <string name="status_launching">正在启动…</string>
-    <string name="status_need_permission">需要授予“安装未知应用”权限</string>
-    <string name="status_install_failed">安装未完成，请重试</string>
-    <string name="status_install_canceled">安装已取消</string>
-    <string name="status_launch_failed">启动运行组件失败</string>
-    <string name="status_missing_asset">未找到内嵌安装包，请将 B.apk 放入 assets 目录</string>
+    <string name="status_checking">Checking runtime component…</string>
+    <string name="status_installing">Installation in progress. Please do not close this app.</string>
+    <string name="status_launching">Launching…</string>
+    <string name="status_need_permission">Permission to install unknown apps is required.</string>
+    <string name="status_install_failed">Installation did not finish. Please try again.</string>
+    <string name="status_install_canceled">Installation canceled.</string>
+    <string name="status_launch_failed">Failed to launch the component.</string>
+    <string name="status_missing_asset">Embedded installer not found. Please place B.apk in the assets folder.</string>
 </resources>

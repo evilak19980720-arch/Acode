@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">Cần có thành phần</string>
+    <string name="need_component_desc">Bạn cần cài đặt một thành phần thời gian chạy trước khi tiếp tục. Nhấn nút bên dưới để cài đặt.</string>
+    <string name="btn_install">Cài đặt và tiếp tục</string>
+    <string name="btn_retry">Thử lại</string>
+    <string name="status_checking">Đang kiểm tra thành phần thời gian chạy…</string>
+    <string name="status_installing">Đang cài đặt. Vui lòng không đóng ứng dụng này.</string>
+    <string name="status_launching">Đang khởi chạy…</string>
+    <string name="status_need_permission">Cần có quyền cài đặt ứng dụng không xác định.</string>
+    <string name="status_install_failed">Cài đặt chưa hoàn tất. Vui lòng thử lại.</string>
+    <string name="status_install_canceled">Đã hủy cài đặt.</string>
+    <string name="status_launch_failed">Không thể khởi chạy thành phần.</string>
+    <string name="status_missing_asset">Không tìm thấy trình cài đặt tích hợp. Vui lòng đặt B.apk vào thư mục assets.</string>
+</resources>

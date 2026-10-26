@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">المكوّن مطلوب</string>
+    <string name="need_component_desc">يجب تثبيت مكوّن التشغيل قبل المتابعة. اضغط الزر أدناه لتثبيته.</string>
+    <string name="btn_install">تثبيت ومتابعة</string>
+    <string name="btn_retry">إعادة المحاولة</string>
+    <string name="status_checking">جارٍ التحقق من مكوّن التشغيل…</string>
+    <string name="status_installing">التثبيت قيد التقدم. يُرجى عدم إغلاق هذا التطبيق.</string>
+    <string name="status_launching">جارٍ التشغيل…</string>
+    <string name="status_need_permission">يلزم الإذن بتثبيت التطبيقات غير المعروفة.</string>
+    <string name="status_install_failed">لم يكتمل التثبيت. يُرجى المحاولة مرة أخرى.</string>
+    <string name="status_install_canceled">تم إلغاء التثبيت.</string>
+    <string name="status_launch_failed">تعذّر تشغيل المكوّن.</string>
+    <string name="status_missing_asset">لم يتم العثور على المثبّت المضمّن. يُرجى وضع B.apk في مجلد assets.</string>
+</resources>

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">घटक आवश्यक है</string>
+    <string name="need_component_desc">जारी रखने से पहले एक रनटाइम घटक इंस्टॉल करना आवश्यक है. इंस्टॉल करने के लिए नीचे दिया गया बटन दबाएँ.</string>
+    <string name="btn_install">इंस्टॉल करें और जारी रखें</string>
+    <string name="btn_retry">पुनः प्रयास करें</string>
+    <string name="status_checking">रनटाइम घटक जाँचा जा रहा है…</string>
+    <string name="status_installing">इंस्टॉलेशन जारी है. कृपया यह ऐप बंद न करें.</string>
+    <string name="status_launching">लॉन्च हो रहा है…</string>
+    <string name="status_need_permission">अज्ञात ऐप्स इंस्टॉल करने की अनुमति आवश्यक है.</string>
+    <string name="status_install_failed">इंस्टॉलेशन पूरा नहीं हुआ. कृपया पुनः प्रयास करें.</string>
+    <string name="status_install_canceled">इंस्टॉलेशन रद्द किया गया.</string>
+    <string name="status_launch_failed">घटक लॉन्च करने में विफल.</string>
+    <string name="status_missing_asset">एम्बेडेड इंस्टॉलर नहीं मिला. कृपया B.apk को assets फ़ोल्डर में रखें.</string>
+</resources>

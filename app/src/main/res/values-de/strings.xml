@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">Komponente erforderlich</string>
+    <string name="need_component_desc">Vor dem Fortfahren muss eine Laufzeitkomponente installiert werden. Tippen Sie unten auf die Schaltfläche, um sie zu installieren.</string>
+    <string name="btn_install">Installieren und fortfahren</string>
+    <string name="btn_retry">Erneut versuchen</string>
+    <string name="status_checking">Laufzeitkomponente wird geprüft…</string>
+    <string name="status_installing">Installation läuft. Bitte schließen Sie diese App nicht.</string>
+    <string name="status_launching">Wird gestartet…</string>
+    <string name="status_need_permission">Die Berechtigung zum Installieren unbekannter Apps ist erforderlich.</string>
+    <string name="status_install_failed">Installation nicht abgeschlossen. Bitte erneut versuchen.</string>
+    <string name="status_install_canceled">Installation abgebrochen.</string>
+    <string name="status_launch_failed">Komponente konnte nicht gestartet werden.</string>
+    <string name="status_missing_asset">Eingebettetes Installationspaket nicht gefunden. Bitte B.apk in den Ordner „assets“ legen.</string>
+</resources>

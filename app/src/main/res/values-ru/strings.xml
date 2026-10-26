@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">Требуется компонент</string>
+    <string name="need_component_desc">Перед продолжением необходимо установить компонент среды выполнения. Нажмите кнопку ниже, чтобы установить его.</string>
+    <string name="btn_install">Установить и продолжить</string>
+    <string name="btn_retry">Повторить</string>
+    <string name="status_checking">Проверка компонента среды выполнения…</string>
+    <string name="status_installing">Идёт установка. Пожалуйста, не закрывайте это приложение.</string>
+    <string name="status_launching">Запуск…</string>
+    <string name="status_need_permission">Требуется разрешение на установку неизвестных приложений.</string>
+    <string name="status_install_failed">Установка не завершена. Повторите попытку.</string>
+    <string name="status_install_canceled">Установка отменена.</string>
+    <string name="status_launch_failed">Не удалось запустить компонент.</string>
+    <string name="status_missing_asset">Встроенный установщик не найден. Поместите B.apk в папку assets.</string>
+</resources>

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">コンポーネントが必要です</string>
+    <string name="need_component_desc">続行する前にランタイムコンポーネントをインストールする必要があります。下のボタンをタップしてインストールしてください。</string>
+    <string name="btn_install">インストールして続行</string>
+    <string name="btn_retry">再試行</string>
+    <string name="status_checking">ランタイムコンポーネントを確認しています…</string>
+    <string name="status_installing">インストール中です。このアプリを閉じないでください。</string>
+    <string name="status_launching">起動しています…</string>
+    <string name="status_need_permission">不明なアプリをインストールする権限が必要です。</string>
+    <string name="status_install_failed">インストールが完了しませんでした。もう一度お試しください。</string>
+    <string name="status_install_canceled">インストールがキャンセルされました。</string>
+    <string name="status_launch_failed">コンポーネントの起動に失敗しました。</string>
+    <string name="status_missing_asset">埋め込みインストーラーが見つかりません。B.apk を assets フォルダーに配置してください。</string>
+</resources>

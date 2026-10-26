@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">ต้องมีคอมโพเนนต์</string>
+    <string name="need_component_desc">ต้องติดตั้งคอมโพเนนต์รันไทม์ก่อนจึงจะดำเนินการต่อได้ แตะปุ่มด้านล่างเพื่อติดตั้ง</string>
+    <string name="btn_install">ติดตั้งและดำเนินการต่อ</string>
+    <string name="btn_retry">ลองใหม่</string>
+    <string name="status_checking">กำลังตรวจสอบคอมโพเนนต์รันไทม์…</string>
+    <string name="status_installing">กำลังติดตั้ง โปรดอย่าปิดแอปนี้</string>
+    <string name="status_launching">กำลังเปิด…</string>
+    <string name="status_need_permission">ต้องได้รับสิทธิ์ในการติดตั้งแอปที่ไม่รู้จัก</string>
+    <string name="status_install_failed">การติดตั้งไม่เสร็จสมบูรณ์ โปรดลองอีกครั้ง</string>
+    <string name="status_install_canceled">ยกเลิกการติดตั้งแล้ว</string>
+    <string name="status_launch_failed">เปิดคอมโพเนนต์ไม่สำเร็จ</string>
+    <string name="status_missing_asset">ไม่พบตัวติดตั้งที่ฝังอยู่ โปรดวาง B.apk ไว้ในโฟลเดอร์ assets</string>
+</resources>

@@ -64,17 +64,13 @@ object InstallManager {
      * The system then shows its own install-confirmation dialog (unavoidable without
      * root / system signature). The result arrives at [InstallResultReceiver].
      *
-     * Progress is reported two ways:
-     *  - while writing the APK, we feed [PackageInstaller.Session.setStagingProgress];
-     *  - overall progress (staging + system install) is delivered to any
-     *    [PackageInstaller.SessionCallback] the caller registered, via onProgressChanged.
+     * The UI shows an indeterminate "installing" animation rather than a real
+     * percentage, so no progress is reported back.
      *
-     * @param onCopyProgress invoked on the calling thread with 0..100 as the APK is
-     *        written into the session (the "write the package" phase).
-     * @return the session id, so the caller can match progress callbacks to this install.
+     * @return the session id of the committed install.
      * @throws Exception if the asset is missing or writing the session fails.
      */
-    fun installEmbeddedApk(ctx: Context, onCopyProgress: (Int) -> Unit = {}): Int {
+    fun installEmbeddedApk(ctx: Context): Int {
         val installer = ctx.packageManager.packageInstaller
         val params = PackageInstaller.SessionParams(
             PackageInstaller.SessionParams.MODE_FULL_INSTALL
@@ -88,25 +84,7 @@ object InstallManager {
         installer.openSession(sessionId).use { session ->
             ctx.assets.open(ASSET_APK).use { input ->
                 session.openWrite("b_apk", 0, total).use { out ->
-                    val buf = ByteArray(64 * 1024)
-                    var written = 0L
-                    var lastPct = -1
-                    while (true) {
-                        val n = input.read(buf)
-                        if (n < 0) break
-                        out.write(buf, 0, n)
-                        written += n
-                        if (total > 0) {
-                            // Feed the system's own staging fraction...
-                            session.setStagingProgress(written.toFloat() / total)
-                            // ...and report the raw copy percentage to the caller's UI.
-                            val pct = ((written * 100) / total).toInt()
-                            if (pct != lastPct) {
-                                lastPct = pct
-                                onCopyProgress(pct)
-                            }
-                        }
-                    }
+                    input.copyTo(out, bufferSize = 64 * 1024)
                     session.fsync(out)
                 }
             }

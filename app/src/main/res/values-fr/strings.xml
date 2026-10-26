@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">Composant requis</string>
+    <string name="need_component_desc">Un composant d’exécution doit être installé avant de continuer. Appuyez sur le bouton ci-dessous pour l’installer.</string>
+    <string name="btn_install">Installer et continuer</string>
+    <string name="btn_retry">Réessayer</string>
+    <string name="status_checking">Vérification du composant d’exécution…</string>
+    <string name="status_installing">Installation en cours. Veuillez ne pas fermer cette application.</string>
+    <string name="status_launching">Lancement…</string>
+    <string name="status_need_permission">L’autorisation d’installer des applications inconnues est requise.</string>
+    <string name="status_install_failed">L’installation ne s’est pas terminée. Veuillez réessayer.</string>
+    <string name="status_install_canceled">Installation annulée.</string>
+    <string name="status_launch_failed">Échec du lancement du composant.</string>
+    <string name="status_missing_asset">Programme d’installation intégré introuvable. Placez B.apk dans le dossier assets.</string>
+</resources>

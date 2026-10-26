@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HostLauncher</string>
+    <string name="need_component_title">Bileşen gerekli</string>
+    <string name="need_component_desc">Devam etmeden önce bir çalışma zamanı bileşeni yüklenmelidir. Yüklemek için aşağıdaki düğmeye dokunun.</string>
+    <string name="btn_install">Yükle ve devam et</string>
+    <string name="btn_retry">Yeniden dene</string>
+    <string name="status_checking">Çalışma zamanı bileşeni denetleniyor…</string>
+    <string name="status_installing">Yükleme sürüyor. Lütfen bu uygulamayı kapatmayın.</string>
+    <string name="status_launching">Başlatılıyor…</string>
+    <string name="status_need_permission">Bilinmeyen uygulamaları yükleme izni gerekli.</string>
+    <string name="status_install_failed">Yükleme tamamlanmadı. Lütfen tekrar deneyin.</string>
+    <string name="status_install_canceled">Yükleme iptal edildi.</string>
+    <string name="status_launch_failed">Bileşen başlatılamadı.</string>
+    <string name="status_missing_asset">Yerleşik yükleyici bulunamadı. Lütfen B.apk dosyasını assets klasörüne koyun.</string>
+</resources>
