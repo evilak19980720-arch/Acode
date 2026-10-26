@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageInstaller
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -20,6 +22,25 @@ import com.example.hostlauncher.databinding.ActivityLauncherBinding
 class LauncherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLauncherBinding
+
+    // Tracks the in-flight install session so progress callbacks can be matched to it.
+    private var currentSessionId = -1
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private val installer by lazy { packageManager.packageInstaller }
+
+    // Reports overall install progress (staging copy + system install) as 0f..1f.
+    private val sessionCallback = object : PackageInstaller.SessionCallback() {
+        override fun onCreated(sessionId: Int) {}
+        override fun onBadgingChanged(sessionId: Int) {}
+        override fun onActiveChanged(sessionId: Int, active: Boolean) {}
+        override fun onFinished(sessionId: Int, success: Boolean) {}
+        override fun onProgressChanged(sessionId: Int, progress: Float) {
+            if (sessionId == currentSessionId) {
+                showInstalling((progress * 100).toInt().coerceIn(0, 100))
+            }
+        }
+    }
 
     // Returned from the "install unknown apps" settings screen; re-check and continue.
     private val unknownSourcesLauncher =
@@ -53,6 +74,7 @@ class LauncherActivity : AppCompatActivity() {
             installResultReceiver,
             IntentFilter(InstallResultReceiver.LOCAL_ACTION)
         )
+        installer.registerSessionCallback(sessionCallback, mainHandler)
 
         binding.actionButton.setOnClickListener { onInstallClicked() }
     }
@@ -66,6 +88,7 @@ class LauncherActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(installResultReceiver)
+        installer.unregisterSessionCallback(sessionCallback)
         super.onDestroy()
     }
 
@@ -92,9 +115,9 @@ class LauncherActivity : AppCompatActivity() {
 
     /** Step 4: kick off the PackageInstaller session. */
     private fun startInstall() {
-        showInstalling()
+        showInstalling(0)
         try {
-            InstallManager.installEmbeddedApk(this)
+            currentSessionId = InstallManager.installEmbeddedApk(this)
         } catch (e: Exception) {
             showPrompt(getString(R.string.status_install_failed))
         }
@@ -115,33 +138,41 @@ class LauncherActivity : AppCompatActivity() {
 
     private fun showChecking() = setState(
         status = getString(R.string.status_checking),
-        progress = true, button = false, prompt = false
+        spinner = true, prompt = false
     )
 
-    private fun showInstalling() = setState(
-        status = getString(R.string.status_installing),
-        progress = true, button = false, prompt = false
+    /** Install state with a determinate percentage bar. */
+    private fun showInstalling(percent: Int) = setState(
+        status = getString(R.string.status_installing_progress, percent),
+        spinner = false, prompt = false, installPercent = percent
     )
 
     private fun showLaunching() = setState(
         status = getString(R.string.status_launching),
-        progress = true, button = false, prompt = false
+        spinner = true, prompt = false
     )
 
     private fun showPrompt(status: String, showButton: Boolean = true) = setState(
-        status = status, progress = false, button = showButton, prompt = true
+        status = status, spinner = false, prompt = true, button = showButton
     )
 
     private fun setState(
         status: String,
-        progress: Boolean,
-        button: Boolean,
+        spinner: Boolean,
         prompt: Boolean,
+        button: Boolean = false,
+        installPercent: Int = -1,
     ) {
-        binding.progress.visibility = if (progress) View.VISIBLE else View.GONE
+        binding.progress.visibility = if (spinner) View.VISIBLE else View.GONE
         binding.actionButton.visibility = if (button) View.VISIBLE else View.GONE
         binding.titleText.visibility = if (prompt) View.VISIBLE else View.GONE
         binding.descText.visibility = if (prompt) View.VISIBLE else View.GONE
+        if (installPercent >= 0) {
+            binding.installProgress.visibility = View.VISIBLE
+            binding.installProgress.progress = installPercent
+        } else {
+            binding.installProgress.visibility = View.GONE
+        }
         binding.statusText.text = status
     }
 }

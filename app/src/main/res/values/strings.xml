@@ -8,6 +8,7 @@
 
     <string name="status_checking">正在检测运行组件…</string>
     <string name="status_installing">正在安装运行组件，请在系统弹窗中点击“安装”…</string>
+    <string name="status_installing_progress">正在安装运行组件… %1$d%%</string>
     <string name="status_launching">正在启动…</string>
     <string name="status_need_permission">需要授予“安装未知应用”权限</string>
     <string name="status_install_failed">安装未完成，请重试</string>

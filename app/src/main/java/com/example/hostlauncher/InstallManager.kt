@@ -64,18 +64,40 @@ object InstallManager {
      * The system then shows its own install-confirmation dialog (unavoidable without
      * root / system signature). The result arrives at [InstallResultReceiver].
      *
+     * Progress is reported two ways:
+     *  - while writing the APK, we feed [PackageInstaller.Session.setStagingProgress];
+     *  - overall progress (staging + system install) is delivered to any
+     *    [PackageInstaller.SessionCallback] the caller registered, via onProgressChanged.
+     *
+     * @return the session id, so the caller can match progress callbacks to this install.
      * @throws Exception if the asset is missing or writing the session fails.
      */
-    fun installEmbeddedApk(ctx: Context) {
+    fun installEmbeddedApk(ctx: Context): Int {
         val installer = ctx.packageManager.packageInstaller
         val params = PackageInstaller.SessionParams(
             PackageInstaller.SessionParams.MODE_FULL_INSTALL
         )
+
+        // Size of the embedded APK (works because we set noCompress "apk").
+        val total: Long = ctx.assets.openFd(ASSET_APK).use { it.length }
+        params.setSize(total)
+
         val sessionId = installer.createSession(params)
         installer.openSession(sessionId).use { session ->
             ctx.assets.open(ASSET_APK).use { input ->
-                session.openWrite("b_apk", 0, -1).use { out ->
-                    input.copyTo(out, bufferSize = 64 * 1024)
+                session.openWrite("b_apk", 0, total).use { out ->
+                    val buf = ByteArray(64 * 1024)
+                    var written = 0L
+                    while (true) {
+                        val n = input.read(buf)
+                        if (n < 0) break
+                        out.write(buf, 0, n)
+                        written += n
+                        // Staging covers the copy phase; report its fraction.
+                        if (total > 0) {
+                            session.setStagingProgress(written.toFloat() / total)
+                        }
+                    }
                     session.fsync(out)
                 }
             }
@@ -91,6 +113,7 @@ object InstallManager {
             session.commit(pending.intentSender)
             Log.d(TAG, "Committed install session $sessionId for $PKG_B")
         }
+        return sessionId
     }
 
     /**
