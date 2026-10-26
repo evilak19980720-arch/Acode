@@ -1,71 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp">
 
-    <LinearLayout
-        android:id="@+id/centerColumn"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_gravity="center"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="10dp"
+        app:cardBackgroundColor="?attr/colorSurface">
 
-        <com.example.hostlauncher.WaveView
-            android:id="@+id/wave"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:visibility="gone" />
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/titleText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/need_component_title"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall"
-            android:visibility="gone" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingStart="28dp"
+            android:paddingTop="32dp"
+            android:paddingEnd="28dp"
+            android:paddingBottom="28dp">
 
-        <TextView
-            android:id="@+id/descText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:text="@string/need_component_desc"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:visibility="gone" />
+            <!-- App icon in a tinted circle (top of the prompt). -->
+            <FrameLayout
+                android:id="@+id/iconWrap"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/icon_circle_bg"
+                android:backgroundTint="?attr/colorPrimaryContainer">
 
-        <TextView
-            android:id="@+id/statusText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:textAppearance="?attr/textAppearanceBodyLarge" />
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@mipmap/ic_launcher" />
+            </FrameLayout>
 
-    </LinearLayout>
+            <!-- Water-ripple animation, shown during install instead of the static icon. -->
+            <com.example.hostlauncher.WaveView
+                android:id="@+id/wave"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/actionButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_install"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="需要安装运行组件" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/messageText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.15"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="首次使用需要安装运行组件后才能继续。" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/actionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:text="@string/btn_install"
+                app:cornerRadius="16dp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

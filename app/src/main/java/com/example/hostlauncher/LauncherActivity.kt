@@ -128,35 +128,49 @@ class LauncherActivity : AppCompatActivity() {
         }
     }
 
-    // ---- UI states ----------------------------------------------------------
+    // ---- UI states (all rendered inside the centered Material card) ----------
 
-    private fun showChecking() = setState(status = getString(R.string.status_checking), spinner = true)
+    private fun showChecking() = setState(
+        message = getString(R.string.status_checking)
+    )
 
-    /** Installing: water-ripple animation + "do not close" message. */
-    private fun showInstalling() = setState(status = getString(R.string.status_installing), wave = true)
+    /** Installing: water-ripple animation + localized "do not close" message. */
+    private fun showInstalling() = setState(
+        message = getString(R.string.status_installing),
+        icon = false, wave = true
+    )
 
-    private fun showLaunching() = setState(status = getString(R.string.status_launching), spinner = true)
+    private fun showLaunching() = setState(
+        message = getString(R.string.status_launching)
+    )
 
-    /** Initial prompt with the install button (static title + description). */
-    private fun showNeedComponent() = setState(prompt = true, button = true)
+    /** Initial prompt with icon, title, description and the install button. */
+    private fun showNeedComponent() = setState(
+        title = getString(R.string.need_component_title),
+        message = getString(R.string.need_component_desc),
+        button = true
+    )
 
-    /** Prompt plus an error/status line. */
-    private fun showError(msg: String, showButton: Boolean = true) =
-        setState(status = msg, prompt = true, button = showButton)
+    /** Prompt plus an error/status message. */
+    private fun showError(msg: String, showButton: Boolean = true) = setState(
+        title = getString(R.string.need_component_title),
+        message = msg,
+        button = showButton
+    )
 
     private fun setState(
-        status: String = "",
-        spinner: Boolean = false,
+        title: String? = null,
+        message: String = "",
+        icon: Boolean = true,
         wave: Boolean = false,
-        prompt: Boolean = false,
         button: Boolean = false,
     ) {
+        binding.iconWrap.visibility = if (icon) View.VISIBLE else View.GONE
         binding.wave.visibility = if (wave) View.VISIBLE else View.GONE
-        binding.progress.visibility = if (spinner) View.VISIBLE else View.GONE
         binding.actionButton.visibility = if (button) View.VISIBLE else View.GONE
-        binding.titleText.visibility = if (prompt) View.VISIBLE else View.GONE
-        binding.descText.visibility = if (prompt) View.VISIBLE else View.GONE
-        binding.statusText.visibility = if (status.isEmpty()) View.GONE else View.VISIBLE
-        binding.statusText.text = status
+        binding.titleText.visibility = if (title.isNullOrEmpty()) View.GONE else View.VISIBLE
+        binding.titleText.text = title.orEmpty()
+        binding.messageText.visibility = if (message.isEmpty()) View.GONE else View.VISIBLE
+        binding.messageText.text = message
     }
 }
