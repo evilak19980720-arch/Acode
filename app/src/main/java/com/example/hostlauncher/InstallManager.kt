@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
+import java.io.File
 
 /**
  * Drives the "install the embedded app B, then launch it" flow for a self-distributed
@@ -44,6 +45,52 @@ object InstallManager {
         ctx.assets.open(ASSET_APK).use { true }
     } catch (e: Exception) {
         false
+    }
+
+    /** versionCode of the installed B, or -1 if B is not installed. */
+    fun installedVersionCode(ctx: Context): Long = try {
+        val info = ctx.packageManager.getPackageInfo(PKG_B, 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode
+        else @Suppress("DEPRECATION") info.versionCode.toLong()
+    } catch (e: PackageManager.NameNotFoundException) {
+        -1L
+    }
+
+    /** versionCode of the embedded B.apk, or -1 if it can't be read. */
+    fun embeddedVersionCode(ctx: Context): Long = try {
+        val apk = extractToCache(ctx)
+        val info = ctx.packageManager.getPackageArchiveInfo(apk.absolutePath, 0)
+        when {
+            info == null -> -1L
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> info.longVersionCode
+            else -> @Suppress("DEPRECATION") info.versionCode.toLong()
+        }
+    } catch (e: Exception) {
+        -1L
+    }
+
+    /**
+     * @return true if B is installed and at least as new as the embedded copy, i.e. no
+     * install or update is needed. If the embedded version can't be read, we do NOT force
+     * an update (treat an installed B as up to date).
+     */
+    fun isUpToDateInstalled(ctx: Context): Boolean {
+        if (!isBInstalled(ctx)) return false
+        val embedded = embeddedVersionCode(ctx)
+        if (embedded < 0) return true
+        return embedded <= installedVersionCode(ctx)
+    }
+
+    /** Extracts the embedded APK to the cache (only when missing or size-changed). */
+    private fun extractToCache(ctx: Context): File {
+        val out = File(ctx.cacheDir, ASSET_APK)
+        val assetLen = ctx.assets.openFd(ASSET_APK).use { it.length }
+        if (!out.exists() || out.length() != assetLen) {
+            ctx.assets.open(ASSET_APK).use { input ->
+                out.outputStream().use { input.copyTo(it) }
+            }
+        }
+        return out
     }
 
     /**

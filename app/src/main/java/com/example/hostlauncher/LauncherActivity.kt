@@ -6,7 +6,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.hostlauncher.databinding.ActivityLauncherBinding
@@ -27,6 +30,17 @@ class LauncherActivity : AppCompatActivity() {
     // True while our install session is in flight, so returning to the foreground
     // (e.g. from the system install dialog) keeps the ripple instead of the prompt.
     private var installing = false
+
+    // While installing, intercept Back and warn instead of closing the app.
+    private val backGuard = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            Toast.makeText(
+                this@LauncherActivity,
+                getString(R.string.status_installing),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     // Returned from the "install unknown apps" settings screen; re-check and continue.
     private val unknownSourcesLauncher =
@@ -65,7 +79,17 @@ class LauncherActivity : AppCompatActivity() {
             IntentFilter(InstallResultReceiver.LOCAL_ACTION)
         )
 
+        onBackPressedDispatcher.addCallback(this, backGuard)
         binding.actionButton.setOnClickListener { onInstallClicked() }
+
+        // Subtle pop-in so the card reads like a dialog appearing.
+        binding.card.alpha = 0f
+        binding.card.scaleX = 0.92f
+        binding.card.scaleY = 0.92f
+        binding.card.animate()
+            .alpha(1f).scaleX(1f).scaleY(1f)
+            .setDuration(220L)
+            .start()
     }
 
     override fun onResume() {
@@ -78,14 +102,17 @@ class LauncherActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    /** Step 6: prefer detecting B; if present, launch straight away. */
+    /**
+     * Step 6: prefer detecting B. Launch it only if the installed copy is at least as new
+     * as the embedded one; otherwise run the install/update flow.
+     */
     private fun evaluate() {
         when {
-            InstallManager.isBInstalled(this) -> launchBOrError()
-            installing -> showInstalling()          // keep ripple while install is running
+            installing -> showInstalling()              // keep ripple while install runs
+            InstallManager.isUpToDateInstalled(this) -> launchBOrError()
             !InstallManager.hasEmbeddedApk(this) ->
                 showError(getString(R.string.status_missing_asset), showButton = false)
-            else -> showNeedComponent()
+            else -> showNeedComponent()                 // fresh install or update available
         }
     }
 
@@ -130,10 +157,6 @@ class LauncherActivity : AppCompatActivity() {
 
     // ---- UI states (all rendered inside the centered Material card) ----------
 
-    private fun showChecking() = setState(
-        message = getString(R.string.status_checking)
-    )
-
     /** Installing: water-ripple animation + localized "do not close" message. */
     private fun showInstalling() = setState(
         message = getString(R.string.status_installing),
@@ -151,11 +174,12 @@ class LauncherActivity : AppCompatActivity() {
         button = true
     )
 
-    /** Prompt plus an error/status message. */
+    /** Prompt plus an error/status message; the button offers a retry. */
     private fun showError(msg: String, showButton: Boolean = true) = setState(
         title = getString(R.string.need_component_title),
         message = msg,
-        button = showButton
+        button = showButton,
+        buttonTextRes = R.string.btn_retry
     )
 
     private fun setState(
@@ -164,13 +188,17 @@ class LauncherActivity : AppCompatActivity() {
         icon: Boolean = true,
         wave: Boolean = false,
         button: Boolean = false,
+        @StringRes buttonTextRes: Int = R.string.btn_install,
     ) {
         binding.iconWrap.visibility = if (icon) View.VISIBLE else View.GONE
         binding.wave.visibility = if (wave) View.VISIBLE else View.GONE
         binding.actionButton.visibility = if (button) View.VISIBLE else View.GONE
+        binding.actionButton.setText(buttonTextRes)
         binding.titleText.visibility = if (title.isNullOrEmpty()) View.GONE else View.VISIBLE
         binding.titleText.text = title.orEmpty()
         binding.messageText.visibility = if (message.isEmpty()) View.GONE else View.VISIBLE
         binding.messageText.text = message
+        // Block Back only while the ripple (install in progress) is showing.
+        backGuard.isEnabled = wave
     }
 }
