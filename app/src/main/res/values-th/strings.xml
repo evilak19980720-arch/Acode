@@ -13,7 +13,4 @@
     <string name="status_launch_failed">เปิดคอมโพเนนต์ไม่สำเร็จ</string>
     <string name="status_missing_asset">ไม่พบตัวติดตั้งที่ฝังอยู่ โปรดวาง B.apk ไว้ในโฟลเดอร์ assets</string>
 
-    <string name="notif_channel_name">การติดตั้ง</string>
-    <string name="notif_title">การติดตั้งยังไม่เสร็จ</string>
-    <string name="notif_text">แตะเพื่อกลับไปติดตั้งให้เสร็จ</string>
 </resources>

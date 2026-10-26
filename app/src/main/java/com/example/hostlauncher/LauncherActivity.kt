@@ -1,12 +1,9 @@
 package com.example.hostlauncher
 
-import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -34,14 +31,7 @@ class LauncherActivity : AppCompatActivity() {
     // (e.g. from the system install dialog) keeps the ripple instead of the prompt.
     private var installing = false
 
-    // Whether the keep-alive foreground service is currently running.
-    private var keepAliveOn = false
-
-    // API 33+ notification permission (so the "tap to return" notification is visible).
-    private val notifPermLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* best effort */ }
-
-    // While installing, intercept Back and warn instead of closing the app.
+    // While the prompt/install dialog is shown, intercept Back and warn instead of closing.
     private val backGuard = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             Toast.makeText(
@@ -91,7 +81,6 @@ class LauncherActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, backGuard)
         binding.actionButton.setOnClickListener { onInstallClicked() }
-        maybeRequestNotificationPermission()
 
         // Subtle pop-in so the card reads like a dialog appearing.
         binding.card.alpha = 0f
@@ -110,32 +99,7 @@ class LauncherActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(installResultReceiver)
-        // Task is finishing / being removed: no point keeping the notification.
-        stopKeepAlive()
         super.onDestroy()
-    }
-
-    private fun maybeRequestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            notifPermLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
-
-    private fun startKeepAlive() {
-        if (!keepAliveOn) {
-            KeepAliveService.start(this)
-            keepAliveOn = true
-        }
-    }
-
-    private fun stopKeepAlive() {
-        if (keepAliveOn) {
-            KeepAliveService.stop(this)
-            keepAliveOn = false
-        }
     }
 
     /**
@@ -186,7 +150,6 @@ class LauncherActivity : AppCompatActivity() {
         showLaunching()
         if (InstallManager.launchB(this)) {
             backGuard.isEnabled = false   // done — allow the activity to finish normally
-            stopKeepAlive()
             finish()
         } else {
             showError(getString(R.string.status_launch_failed))
@@ -240,8 +203,5 @@ class LauncherActivity : AppCompatActivity() {
         // intercepted by a normal app; only a device-owner Lock Task could, which would
         // also break the system install dialog and launching B, so it is not used here.)
         backGuard.isEnabled = true
-        // While an action is pending (prompt button or install ripple), keep an ongoing
-        // notification so the user can tap back if they leave via Home.
-        if (button || wave) startKeepAlive()
     }
 }

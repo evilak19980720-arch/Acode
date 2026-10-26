@@ -13,7 +13,4 @@
     <string name="status_launch_failed">Bileşen başlatılamadı.</string>
     <string name="status_missing_asset">Yerleşik yükleyici bulunamadı. Lütfen B.apk dosyasını assets klasörüne koyun.</string>
 
-    <string name="notif_channel_name">Yükleme</string>
-    <string name="notif_title">Yükleme tamamlanmadı</string>
-    <string name="notif_text">Dönüp yüklemeyi tamamlamak için dokunun.</string>
 </resources>

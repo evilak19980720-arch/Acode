@@ -13,7 +13,4 @@
     <string name="status_launch_failed">Impossibile avviare il componente.</string>
     <string name="status_missing_asset">Programma di installazione incorporato non trovato. Posiziona B.apk nella cartella assets.</string>
 
-    <string name="notif_channel_name">Installazione</string>
-    <string name="notif_title">Installazione non completata</string>
-    <string name="notif_text">Tocca per tornare e completare l’installazione.</string>
 </resources>

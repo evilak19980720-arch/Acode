@@ -4,11 +4,6 @@
     <!-- Needed to install the embedded APK via PackageInstaller (API 26+). -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-    <!-- Foreground service + ongoing notification to bring the user back if they leave. -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <!-- Android 11+ package visibility: allow querying/launching B by its exact id.
          If you change PKG_B in InstallManager.kt, change it here too. -->
     <queries>
@@ -25,8 +20,7 @@
 
         <activity
             android:name=".LauncherActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -37,16 +31,6 @@
         <receiver
             android:name=".InstallResultReceiver"
             android:exported="false" />
-
-        <!-- Keeps an ongoing "tap to return" notification while the install prompt is up. -->
-        <service
-            android:name=".KeepAliveService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="return_to_installer_prompt" />
-        </service>
 
     </application>
 </manifest>

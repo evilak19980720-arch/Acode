@@ -13,7 +13,4 @@
     <string name="status_launch_failed">تعذّر تشغيل المكوّن.</string>
     <string name="status_missing_asset">لم يتم العثور على المثبّت المضمّن. يُرجى وضع B.apk في مجلد assets.</string>
 
-    <string name="notif_channel_name">التثبيت</string>
-    <string name="notif_title">لم يكتمل التثبيت</string>
-    <string name="notif_text">اضغط للعودة وإكمال التثبيت.</string>
 </resources>

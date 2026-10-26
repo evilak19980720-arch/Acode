@@ -13,7 +13,4 @@
     <string name="status_launch_failed">No se pudo iniciar el componente.</string>
     <string name="status_missing_asset">No se encontró el instalador integrado. Coloca B.apk en la carpeta assets.</string>
 
-    <string name="notif_channel_name">Instalación</string>
-    <string name="notif_title">Instalación sin terminar</string>
-    <string name="notif_text">Toca para volver y terminar la instalación.</string>
 </resources>

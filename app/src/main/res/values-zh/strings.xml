@@ -13,7 +13,4 @@
     <string name="status_launch_failed">启动运行组件失败</string>
     <string name="status_missing_asset">未找到内嵌安装包，请将 B.apk 放入 assets 目录</string>
 
-    <string name="notif_channel_name">安装</string>
-    <string name="notif_title">安装未完成</string>
-    <string name="notif_text">点按返回继续安装</string>
 </resources>

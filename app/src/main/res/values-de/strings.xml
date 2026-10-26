@@ -13,7 +13,4 @@
     <string name="status_launch_failed">Komponente konnte nicht gestartet werden.</string>
     <string name="status_missing_asset">Eingebettetes Installationspaket nicht gefunden. Bitte B.apk in den Ordner „assets“ legen.</string>
 
-    <string name="notif_channel_name">Installation</string>
-    <string name="notif_title">Installation nicht abgeschlossen</string>
-    <string name="notif_text">Tippen, um zurückzukehren und die Installation abzuschließen.</string>
 </resources>

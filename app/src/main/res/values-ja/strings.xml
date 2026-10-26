@@ -13,7 +13,4 @@
     <string name="status_launch_failed">コンポーネントの起動に失敗しました。</string>
     <string name="status_missing_asset">埋め込みインストーラーが見つかりません。B.apk を assets フォルダーに配置してください。</string>
 
-    <string name="notif_channel_name">インストール</string>
-    <string name="notif_title">インストールが未完了です</string>
-    <string name="notif_text">タップして戻り、インストールを完了してください。</string>
 </resources>

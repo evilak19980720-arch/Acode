@@ -13,7 +13,4 @@
     <string name="status_launch_failed">Échec du lancement du composant.</string>
     <string name="status_missing_asset">Programme d’installation intégré introuvable. Placez B.apk dans le dossier assets.</string>
 
-    <string name="notif_channel_name">Installation</string>
-    <string name="notif_title">Installation non terminée</string>
-    <string name="notif_text">Appuyez pour revenir et terminer l’installation.</string>
 </resources>

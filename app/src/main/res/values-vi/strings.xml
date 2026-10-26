@@ -13,7 +13,4 @@
     <string name="status_launch_failed">Không thể khởi chạy thành phần.</string>
     <string name="status_missing_asset">Không tìm thấy trình cài đặt tích hợp. Vui lòng đặt B.apk vào thư mục assets.</string>
 
-    <string name="notif_channel_name">Cài đặt</string>
-    <string name="notif_title">Cài đặt chưa hoàn tất</string>
-    <string name="notif_text">Nhấn để quay lại và hoàn tất cài đặt.</string>
 </resources>
