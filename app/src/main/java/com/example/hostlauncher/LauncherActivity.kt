@@ -29,15 +29,21 @@ class LauncherActivity : AppCompatActivity() {
 
     private val installer by lazy { packageManager.packageInstaller }
 
-    // Reports overall install progress (staging copy + system install) as 0f..1f.
+    // Overall session progress is 0f..1f: ~0..0.8 is the staging/copy phase (which we
+    // already show ourselves), ~0.8..1.0 is the real system install. We only surface the
+    // system-install slice here, remapped to 0..100.
     private val sessionCallback = object : PackageInstaller.SessionCallback() {
         override fun onCreated(sessionId: Int) {}
         override fun onBadgingChanged(sessionId: Int) {}
         override fun onActiveChanged(sessionId: Int, active: Boolean) {}
         override fun onFinished(sessionId: Int, success: Boolean) {}
         override fun onProgressChanged(sessionId: Int, progress: Float) {
-            if (sessionId == currentSessionId) {
-                showInstalling((progress * 100).toInt().coerceIn(0, 100))
+            if (sessionId != currentSessionId) return
+            if (progress >= STAGING_FRACTION) {
+                val installPct =
+                    (((progress - STAGING_FRACTION) / (1f - STAGING_FRACTION)) * 100)
+                        .toInt().coerceIn(0, 100)
+                showSystemInstalling(installPct)
             }
         }
     }
@@ -113,14 +119,30 @@ class LauncherActivity : AppCompatActivity() {
         startInstall()
     }
 
-    /** Step 4: kick off the PackageInstaller session. */
+    /**
+     * Step 4: write B.apk into a session (showing real byte progress), then commit.
+     * Runs off the main thread so the copy doesn't block the UI and the percentage
+     * can animate. After commit the system install UI takes over; its progress is
+     * shown by [sessionCallback] when this screen is foreground.
+     */
     private fun startInstall() {
-        showInstalling(0)
-        try {
-            currentSessionId = InstallManager.installEmbeddedApk(this)
-        } catch (e: Exception) {
-            showPrompt(getString(R.string.status_install_failed))
-        }
+        currentSessionId = -1
+        showWriting(0)
+        Thread {
+            try {
+                val id = InstallManager.installEmbeddedApk(this) { pct ->
+                    runOnUiThread { if (currentSessionId == -1) showWriting(pct) }
+                }
+                runOnUiThread {
+                    currentSessionId = id
+                    // Hand-off to the system installer; show an indeterminate state
+                    // until onProgressChanged reports the real install fraction.
+                    showSystemInstalling(null)
+                }
+            } catch (e: Exception) {
+                runOnUiThread { showPrompt(getString(R.string.status_install_failed)) }
+            }
+        }.start()
     }
 
     /** Step 5: install finished -> launch B. */
@@ -141,11 +163,26 @@ class LauncherActivity : AppCompatActivity() {
         spinner = true, prompt = false
     )
 
-    /** Install state with a determinate percentage bar. */
-    private fun showInstalling(percent: Int) = setState(
-        status = getString(R.string.status_installing_progress, percent),
+    /** Writing B.apk into the session — real byte progress. */
+    private fun showWriting(percent: Int) = setState(
+        status = getString(R.string.status_writing, percent),
         spinner = false, prompt = false, installPercent = percent
     )
+
+    /**
+     * System install phase. [percent] null = indeterminate (system UI owns the screen);
+     * a value = the real install fraction reported while this screen is foreground.
+     */
+    private fun showSystemInstalling(percent: Int?) {
+        if (percent == null) {
+            setState(getString(R.string.status_sys_installing), spinner = true, prompt = false)
+        } else {
+            setState(
+                getString(R.string.status_sys_installing_progress, percent),
+                spinner = false, prompt = false, installPercent = percent
+            )
+        }
+    }
 
     private fun showLaunching() = setState(
         status = getString(R.string.status_launching),
@@ -174,5 +211,10 @@ class LauncherActivity : AppCompatActivity() {
             binding.installProgress.visibility = View.GONE
         }
         binding.statusText.text = status
+    }
+
+    companion object {
+        /** Fraction of overall session progress the framework assigns to staging/copy. */
+        private const val STAGING_FRACTION = 0.8f
     }
 }
