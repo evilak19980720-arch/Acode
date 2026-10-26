@@ -12,4 +12,8 @@
     <string name="status_install_canceled">इंस्टॉलेशन रद्द किया गया.</string>
     <string name="status_launch_failed">घटक लॉन्च करने में विफल.</string>
     <string name="status_missing_asset">एम्बेडेड इंस्टॉलर नहीं मिला. कृपया B.apk को assets फ़ोल्डर में रखें.</string>
+
+    <string name="notif_channel_name">इंस्टॉलेशन</string>
+    <string name="notif_title">इंस्टॉलेशन अधूरा है</string>
+    <string name="notif_text">वापस आकर इंस्टॉलेशन पूरा करने के लिए टैप करें.</string>
 </resources>

@@ -12,4 +12,8 @@
     <string name="status_install_canceled">Pemasangan dibatalkan.</string>
     <string name="status_launch_failed">Gagal meluncurkan komponen.</string>
     <string name="status_missing_asset">Pemasang tertanam tidak ditemukan. Harap letakkan B.apk di folder assets.</string>
+
+    <string name="notif_channel_name">Pemasangan</string>
+    <string name="notif_title">Pemasangan belum selesai</string>
+    <string name="notif_text">Ketuk untuk kembali dan menyelesaikan pemasangan.</string>
 </resources>

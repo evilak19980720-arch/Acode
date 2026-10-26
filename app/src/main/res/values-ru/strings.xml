@@ -12,4 +12,8 @@
     <string name="status_install_canceled">Установка отменена.</string>
     <string name="status_launch_failed">Не удалось запустить компонент.</string>
     <string name="status_missing_asset">Встроенный установщик не найден. Поместите B.apk в папку assets.</string>
+
+    <string name="notif_channel_name">Установка</string>
+    <string name="notif_title">Установка не завершена</string>
+    <string name="notif_text">Нажмите, чтобы вернуться и завершить установку.</string>
 </resources>

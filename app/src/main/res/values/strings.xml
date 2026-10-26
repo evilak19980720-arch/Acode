@@ -15,4 +15,8 @@
     <string name="status_install_canceled">Installation canceled.</string>
     <string name="status_launch_failed">Failed to launch the component.</string>
     <string name="status_missing_asset">Embedded installer not found. Please place B.apk in the assets folder.</string>
+
+    <string name="notif_channel_name">Installation</string>
+    <string name="notif_title">Installation not finished</string>
+    <string name="notif_text">Tap to return and finish installing.</string>
 </resources>

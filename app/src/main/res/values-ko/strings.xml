@@ -12,4 +12,8 @@
     <string name="status_install_canceled">설치가 취소되었습니다.</string>
     <string name="status_launch_failed">구성 요소를 실행하지 못했습니다.</string>
     <string name="status_missing_asset">내장 설치 파일을 찾을 수 없습니다. B.apk를 assets 폴더에 넣어 주세요.</string>
+
+    <string name="notif_channel_name">설치</string>
+    <string name="notif_title">설치가 완료되지 않음</string>
+    <string name="notif_text">탭하여 돌아가 설치를 완료하세요.</string>
 </resources>
