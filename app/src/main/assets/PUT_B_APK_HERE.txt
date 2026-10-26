@@ -1,0 +1,10 @@
+把要内嵌安装的应用 B 放在这个目录里，并重命名为：
+
+    B.apk
+
+即最终路径为： app/src/main/assets/B.apk
+
+然后在 InstallManager.kt 里把 PKG_B 改成 B 的真实包名（applicationId），
+同时把 AndroidManifest.xml 的 <queries> 里的 package name 改成一样的值。
+
+放好后可以删除本说明文件。
